@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+.venv/
+
+# Database
+*.db
+
+# Uploads
+uploads/
+
+# Temporary files
+temp.xlsx
+temp.pdf
+
+# OS
+.DS_Store
+Thumbs.db
