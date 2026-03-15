@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Recovery Data</title>
+</head>
+
+<body>
+
+    <h2>Datos Recuperados (Backup)</h2>
+
+    <a href="/">Volver</a>
+    <a href="/vaciar_recovery" 
+onclick="return confirm('¿Eliminar todos los datos de Recovery Data?')">
+<button>Eliminar definitivamente Recovery Data</button>
+</a>
+    <table border="1">
+
+        <tr>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Turno</th>
+            <th>Codigo</th>
+            <th>Lote</th>
+            <th>Peso</th>
+            <th>Ubicacion</th>
+            <th>Stock</th>
+            <th>Cantidad</th>
+            <th>Despacho</th>
+            <th>Saldo</th>
+            <th>Obs</th>
+        </tr>
+
+        {% for r in registros %}
+
+        <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ r.fecha }}</td>
+            <td>{{ r.turno }}</td>
+            <td>{{ r.codigo }}</td>
+            <td>{{ r.lote }}</td>
+            <td>{{ r.peso_promedio }}</td>
+            <td>{{ r.ubicacion }}</td>
+            <td>{{ r.stock_inicial }}</td>
+            <td>{{ r.cantidad_sap }}</td>
+            <td>{{ r.despacho }}</td>
+            <td>{{ r.saldo }}</td>
+            <td>{{ r.observaciones }}</td>
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</body>
+
+</html>

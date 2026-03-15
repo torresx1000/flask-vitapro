@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Despachos PDF</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+
+<body>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div style="color:red; margin:10px;">
+    {{ messages[0] }}
+</div>
+{% endif %}
+{% endwith %}
+
+<h2>Cargar PDF</h2>
+
+<form action="{{ url_for('pdf.subir_pdf') }}" method="post" enctype="multipart/form-data">
+    <input type="file" name="pdf" required>
+    <button type="submit">Subir</button>
+</form>
+
+<hr>
+
+<a href="{{ url_for('pdf.limpiar_tabla') }}">
+    <button>Limpiar tabla</button>
+</a>
+
+<a href="{{ url_for('pdf.ver_recovery') }}">
+    <button>Ver Recovery Data</button>
+</a>
+
+<a href="{{ url_for('dashboard.dashboard') }}">
+    <button>Dashboard</button>
+</a>
+
+<a href="{{ url_for('excel.procesar_excel_route') }}">
+    <button>Procesar Excel</button>
+</a>
+
+<hr>
+
+<h2>Registros</h2>
+
+<table border="1">
+
+<thead>
+<tr>
+    <th>ID</th>
+    <th>ID Carga</th>
+    <th>Fecha</th>
+    <th>Turno</th>
+    <th>Codigo</th>
+    <th>Lote</th>
+    <th>Peso Promedio</th>
+    <th>Ubicación</th>
+    <th>Stock Inicial</th>
+    <th>Cantidad SAP</th>
+    <th>Despacho</th>
+    <th>Saldo</th>
+    <th>Observaciones</th>
+    <th>Actividad</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for r in registros %}
+
+<tr>
+    <td>{{ r.id }}</td>
+    <td>{{ r.id_carga }}</td>
+    <td>{{ r.fecha }}</td>
+    <td>{{ r.turno }}</td>
+    <td>{{ r.codigo }}</td>
+    <td>{{ r.lote }}</td>
+    <td>{{ r.peso_promedio }}</td>
+    <td>{{ r.ubicacion }}</td>
+    <td>{{ r.stock_inicial }}</td>
+    <td>{{ r.cantidad_sap }}</td>
+    <td>{{ r.despacho }}</td>
+    <td>{{ r.saldo }}</td>
+    <td>{{ r.observaciones }}</td>
+    <td>
+        <a href="{{ url_for('dashboard.editar', id=r.id) }}">Editar</a>
+        <a href="{{ url_for('dashboard.eliminar', id=r.id) }}">Eliminar</a>
+    </td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+<form action="{{ url_for('excel.exportar_excel') }}" method="get">
+    <button type="submit">Exportar a Excel</button>
+</form>
+
+</body>
+</html>

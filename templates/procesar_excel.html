@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Procesar Excel</title>
+</head>
+
+<body>
+
+<h2>Procesar Excel</h2>
+
+<form action="/procesar_excel" method="post" enctype="multipart/form-data">
+
+Archivo Excel
+<input type="file" name="excel" required>
+
+<br><br>
+
+Columna de códigos
+<input type="text" name="col_codigo" placeholder="Ej: A" required>
+
+<br><br>
+
+Fila inicio
+<input type="number" name="fila_inicio" placeholder="Ej: 2" required>
+
+<br><br>
+
+Fila final
+<input type="number" name="fila_final" placeholder="Ej: 50" required>
+
+<br><br>
+
+Columna resultado
+<input type="text" name="col_resultado" placeholder="Ej: D" required>
+
+<br><br>
+
+Hoja a procesar
+<input type="text" name="hoja" placeholder="Ej: 1">
+
+<br><br>
+
+<button type="submit">Procesar Excel</button>
+
+</form>
+
+<br>
+
+<a href="/">
+<button>Volver</button>
+</a>
+
+</body>
+
+</html>

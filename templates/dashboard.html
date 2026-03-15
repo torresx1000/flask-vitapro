@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <h1>Dashboard de Despachos</h1>
+
+    <a href="/">
+        <button>Volver</button>
+    </a>
+
+    <hr>
+
+    <div style="display:flex; gap:20px; flex-wrap:wrap;">
+
+        <div style="border:1px solid #ccc; padding:15px;">
+            <h3>Total Stock Inicial</h3>
+            {{ total_stock }}
+        </div>
+
+        <div style="border:1px solid #ccc; padding:15px;">
+            <h3>Total Cantidad SAP</h3>
+            {{ total_sap }}
+        </div>
+
+        <div style="border:1px solid #ccc; padding:15px;">
+            <h3>Total Despacho</h3>
+            {{ total_despacho }}
+        </div>
+
+        <div style="border:1px solid #ccc; padding:15px;">
+            <h3>Total Saldo</h3>
+            {{ total_saldo }}
+        </div>
+
+        <div style="border:1px solid #ccc; padding:15px;">
+            <h3>Total Registros</h3>
+            {{ total_registros }}
+        </div>
+
+        <div style="border:1px solid #ccc; padding:15px;">
+            <h3>Total Cargas PDF</h3>
+            {{ total_cargas }}
+        </div>
+
+    </div>
+    <div>
+        <h2>Despachos por Fecha</h2>
+
+<canvas id="graficoFechas" style="max-width: 600px; height: 400px;"></canvas>
+
+    </div>
+<h2>Despachos por Turno</h2>
+
+<canvas id="graficoTurnos" style="max-width: 600px; height: 400px;"></canvas>
+<script>
+
+fetch("/data_fechas")
+.then(response => response.json())
+.then(data => {
+
+    const ctx = document.getElementById('graficoFechas');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.fechas,
+            datasets: [{
+                label: 'Despachos por Fecha',
+                data: data.cantidades,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Total Despachos por Fecha'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+});
+
+</script>
+<script>
+
+fetch("/data_turnos")
+.then(response => response.json())
+.then(data => {
+
+    const ctx = document.getElementById('graficoTurnos');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.turnos,
+            datasets: [{
+                label: 'Despachos por Turno',
+                data: data.cantidades,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Total Despachos por Turno'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+});
+
+</script>
+
+    <h2>Despachos por Código</h2>
+
+<canvas id="graficoDespacho" style="max-width: 600px; height: 400px;"></canvas>
+<script>
+
+fetch("/data_despachos")
+.then(response => response.json())
+.then(data => {
+
+    const ctx = document.getElementById('graficoDespacho');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.codigos,
+            datasets: [{
+                label: 'Cantidad Despachada',
+                data: data.cantidades,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Despachos por Producto'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+});
+
+</script>
+</body>
+
+</html>
