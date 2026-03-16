@@ -10,13 +10,38 @@ from flask import (
     redirect,
     url_for,
     current_app,
+    jsonify,
 )
 
 from app.services.excel_service import procesar_excel
+from app.services.excel_service import preview_excel
 from app.services.excel_service import exportar_excel as exportar_excel_service
 from app.utils.file_utils import clean_old_files
 
 excel_bp = Blueprint("excel", __name__)
+
+
+@excel_bp.route("/preview_excel", methods=["POST"])
+def preview_excel_route():
+    """Vista previa del Excel (función aparte): devuelve hojas y primeras filas en JSON."""
+    if "excel" not in request.files:
+        return jsonify({"error": "No se subió archivo"}), 400
+
+    archivo = request.files["excel"]
+    if archivo.filename == "":
+        return jsonify({"error": "No se seleccionó archivo"}), 400
+
+    upload_folder = current_app.config["UPLOAD_FOLDER"]
+    allowed = current_app.config["ALLOWED_EXCEL_EXTENSIONS"]
+
+    try:
+        data = preview_excel(archivo, upload_folder, allowed)
+        return jsonify(data)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        current_app.logger.exception("preview_excel")
+        return jsonify({"error": "Error al leer el archivo: " + str(e)}), 500
 
 @excel_bp.route("/procesar_excel", methods=["GET", "POST"])
 def procesar_excel_route():

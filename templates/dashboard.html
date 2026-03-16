@@ -1,179 +1,213 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
-    <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Despachos PDF</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-Y0zQr07d8uSsM9Q898aFj1b48ZQ9n8yEzZDh8HwX75lC6rJfCx7/rHrR0jX83n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
 
-    <h1>Dashboard de Despachos</h1>
-
-    <a href="/">
-        <button>Volver</button>
-    </a>
-
-    <hr>
-
-    <div style="display:flex; gap:20px; flex-wrap:wrap;">
-
-        <div style="border:1px solid #ccc; padding:15px;">
-            <h3>Total Stock Inicial</h3>
-            {{ total_stock }}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('dashboard.home') }}">Despachos PDF</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menú">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('dashboard.home') }}">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active nav-link-close" href="{{ url_for('dashboard.dashboard') }}">Dashboard / Detalle</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('pdf.ver_recovery') }}">Recovery Data</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('excel.procesar_excel_route') }}">Procesar Excel</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('pdf.limpiar_tabla') }}">Limpiar tabla</a>
+                </li>
+            </ul>
         </div>
-
-        <div style="border:1px solid #ccc; padding:15px;">
-            <h3>Total Cantidad SAP</h3>
-            {{ total_sap }}
-        </div>
-
-        <div style="border:1px solid #ccc; padding:15px;">
-            <h3>Total Despacho</h3>
-            {{ total_despacho }}
-        </div>
-
-        <div style="border:1px solid #ccc; padding:15px;">
-            <h3>Total Saldo</h3>
-            {{ total_saldo }}
-        </div>
-
-        <div style="border:1px solid #ccc; padding:15px;">
-            <h3>Total Registros</h3>
-            {{ total_registros }}
-        </div>
-
-        <div style="border:1px solid #ccc; padding:15px;">
-            <h3>Total Cargas PDF</h3>
-            {{ total_cargas }}
-        </div>
-
     </div>
-    <div>
-        <h2>Despachos por Fecha</h2>
+</nav>
 
-<canvas id="graficoFechas" style="max-width: 600px; height: 400px;"></canvas>
+<main class="container-fluid py-4 flex-grow-1">
+    <h1 class="h3 mb-4">Dashboard de Despachos</h1>
 
+    <div class="dashboard-kpis row g-3 mb-4">
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="dashboard-kpi card border-0 shadow-sm">
+                <div class="dashboard-kpi-header">Total Stock Inicial</div>
+                <div class="dashboard-kpi-value">{{ total_stock }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="dashboard-kpi card border-0 shadow-sm">
+                <div class="dashboard-kpi-header">Total Cantidad SAP</div>
+                <div class="dashboard-kpi-value">{{ total_sap }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="dashboard-kpi card border-0 shadow-sm">
+                <div class="dashboard-kpi-header">Total Despacho</div>
+                <div class="dashboard-kpi-value">{{ total_despacho }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="dashboard-kpi card border-0 shadow-sm">
+                <div class="dashboard-kpi-header">Total Saldo</div>
+                <div class="dashboard-kpi-value">{{ total_saldo }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="dashboard-kpi card border-0 shadow-sm">
+                <div class="dashboard-kpi-header">Total Registros</div>
+                <div class="dashboard-kpi-value">{{ total_registros }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="dashboard-kpi card border-0 shadow-sm">
+                <div class="dashboard-kpi-header">Total Cargas PDF</div>
+                <div class="dashboard-kpi-value">{{ total_cargas }}</div>
+            </div>
+        </div>
     </div>
-<h2>Despachos por Turno</h2>
 
-<canvas id="graficoTurnos" style="max-width: 600px; height: 400px;"></canvas>
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="dashboard-chart-card card border-0 shadow-sm">
+                <div class="dashboard-chart-header">Despachos por Fecha</div>
+                <div class="dashboard-chart-body">
+                    <canvas id="graficoFechas"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="dashboard-chart-card card border-0 shadow-sm">
+                <div class="dashboard-chart-header">Despachos por Turno</div>
+                <div class="dashboard-chart-body">
+                    <canvas id="graficoTurnos"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="dashboard-chart-card card border-0 shadow-sm">
+                <div class="dashboard-chart-header">Despachos por Código (Producto)</div>
+                <div class="dashboard-chart-body">
+                    <canvas id="graficoDespacho"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
 <script>
-
-fetch("/data_fechas")
-.then(response => response.json())
-.then(data => {
-
-    const ctx = document.getElementById('graficoFechas');
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: data.fechas,
-            datasets: [{
-                label: 'Despachos por Fecha',
-                data: data.cantidades,
-                borderWidth: 1
-            }]
+const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+        legend: { display: false },
+        title: { display: false }
+    },
+    scales: {
+        x: {
+            grid: { color: 'rgba(0,0,0,0.06)' },
+            ticks: { font: { size: 11 }, maxRotation: 45 }
         },
-        options: {
-            responsive: true,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Total Despachos por Fecha'
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
+        y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(0,0,0,0.06)' },
+            ticks: { font: { size: 11 } }
         }
+    }
+};
+const barColors = {
+    bg: 'rgba(30, 58, 95, 0.75)',
+    border: 'rgba(30, 58, 95, 1)',
+    hover: 'rgba(30, 58, 95, 0.9)'
+};
+
+fetch("{{ url_for('dashboard.data_fechas') }}")
+    .then(r => r.json())
+    .then(data => {
+        new Chart(document.getElementById('graficoFechas'), {
+            type: 'bar',
+            data: {
+                labels: data.fechas,
+                datasets: [{
+                    label: 'Despachos por Fecha',
+                    data: data.cantidades,
+                    backgroundColor: barColors.bg,
+                    borderColor: barColors.border,
+                    borderWidth: 1,
+                    hoverBackgroundColor: barColors.hover
+                }]
+            },
+            options: { ...chartOptions }
+        });
     });
 
-});
-
-</script>
-<script>
-
-fetch("/data_turnos")
-.then(response => response.json())
-.then(data => {
-
-    const ctx = document.getElementById('graficoTurnos');
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: data.turnos,
-            datasets: [{
-                label: 'Despachos por Turno',
-                data: data.cantidades,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Total Despachos por Turno'
-                }
+fetch("{{ url_for('dashboard.data_turnos') }}")
+    .then(r => r.json())
+    .then(data => {
+        new Chart(document.getElementById('graficoTurnos'), {
+            type: 'bar',
+            data: {
+                labels: data.turnos,
+                datasets: [{
+                    label: 'Despachos por Turno',
+                    data: data.cantidades,
+                    backgroundColor: barColors.bg,
+                    borderColor: barColors.border,
+                    borderWidth: 1,
+                    hoverBackgroundColor: barColors.hover
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
+            options: { ...chartOptions }
+        });
     });
 
-});
-
-</script>
-
-    <h2>Despachos por Código</h2>
-
-<canvas id="graficoDespacho" style="max-width: 600px; height: 400px;"></canvas>
-<script>
-
-fetch("/data_despachos")
-.then(response => response.json())
-.then(data => {
-
-    const ctx = document.getElementById('graficoDespacho');
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: data.codigos,
-            datasets: [{
-                label: 'Cantidad Despachada',
-                data: data.cantidades,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                title: {
-                    display: true,
-                    text: 'Despachos por Producto'
-                }
+fetch("{{ url_for('dashboard.data_despachos') }}")
+    .then(r => r.json())
+    .then(data => {
+        new Chart(document.getElementById('graficoDespacho'), {
+            type: 'bar',
+            data: {
+                labels: data.codigos,
+                datasets: [{
+                    label: 'Cantidad Despachada',
+                    data: data.cantidades,
+                    backgroundColor: barColors.bg,
+                    borderColor: barColors.border,
+                    borderWidth: 1,
+                    hoverBackgroundColor: barColors.hover
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
+            options: { ...chartOptions }
+    });
+});
+</script>
+<script>
+document.querySelectorAll('.nav-link-close').forEach(function(link) {
+    link.addEventListener('click', function() {
+        var collapse = document.getElementById('navbarNav');
+        if (collapse && collapse.classList.contains('show')) {
+            var bs = bootstrap.Collapse.getInstance(collapse);
+            if (bs) bs.hide();
         }
     });
-
 });
-
 </script>
+
 </body>
-
 </html>

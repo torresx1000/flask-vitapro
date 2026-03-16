@@ -1,0 +1,370 @@
+/* Estilos generales y complemento a Bootstrap */
+
+/* Navbar: detalle, alineación y funcionamiento en tablet/móvil */
+.navbar-brand {
+    font-weight: 600;
+}
+
+.navbar-nav .nav-link {
+    font-weight: 500;
+}
+
+.navbar-nav .nav-link:hover {
+    opacity: 0.9;
+}
+
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.35);
+}
+
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        margin-top: 0.5rem;
+        padding: 0.5rem 0;
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 0.5rem;
+        z-index: 1020;
+    }
+
+    .navbar-collapse .nav-link {
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* Búsqueda por código */
+.search-codigo-wrap .form-control:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+#tablaRegistros tbody tr[style*="display: none"] + tr:not([style*="display: none"]) td,
+#tablaRegistros tbody tr:not([style*="display: none"]) td {
+    vertical-align: middle;
+}
+
+/* Tabla responsive y legibilidad */
+#tablaRegistros {
+    font-size: 0.9rem;
+}
+
+#tablaRegistros th {
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .search-codigo-wrap {
+        max-width: 100% !important;
+    }
+}
+
+/* ========== Tablas responsive (scroll horizontal en móvil/tablet) ========== */
+.table-responsive-invoice,
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
+}
+
+.table-responsive .table-invoice {
+    min-width: 800px;
+}
+
+.table-responsive-invoice .table-invoice {
+    min-width: 900px;
+}
+
+.table-invoice .th-checkbox,
+.table-invoice .td-checkbox {
+    width: 1%;
+    white-space: nowrap;
+    padding-left: 0.75rem;
+    padding-right: 0.5rem;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* ========== Página Procesar Excel - Estilo formulario (panel lavanda) ========== */
+.excel-page {
+    background: linear-gradient(160deg, #3d2a5c 0%, #2d1f45 50%, #1f1535 100%);
+    min-height: 100vh;
+}
+
+.excel-form-panel {
+    width: 100%;
+    max-width: 560px;
+    background: linear-gradient(180deg, #e8e0f0 0%, #d8cee8 50%, #d0c4e0 100%);
+    border-radius: 20px;
+    padding: 2rem 2.25rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.excel-form-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d2340;
+    margin-bottom: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.excel-form-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: rgba(45, 35, 64, 0.12);
+    color: #2d2340;
+    border-radius: 8px;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.excel-form-section {
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid rgba(210, 196, 224, 0.6);
+}
+
+.excel-form-section-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #3d2a5c;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.excel-form-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2d2340;
+    margin-bottom: 0.4rem;
+}
+
+.excel-form-input {
+    width: 100%;
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+    color: #2d2340;
+    background: #faf8fc;
+    border: 1px solid #e0d8e8;
+    border-radius: 10px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.excel-form-input:focus {
+    outline: none;
+    border-color: #9b8ab8;
+    box-shadow: 0 0 0 3px rgba(155, 138, 184, 0.2);
+}
+
+.excel-form-input::file-selector-button {
+    padding: 0.4rem 0.75rem;
+    margin-right: 0.75rem;
+    background: #e8e0f0;
+    border: 1px solid #d0c4e0;
+    border-radius: 8px;
+    color: #2d2340;
+    font-size: 0.85rem;
+}
+
+.excel-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding-top: 0.5rem;
+}
+
+.excel-btn {
+    padding: 0.7rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 10px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.excel-btn:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+.excel-btn-primary {
+    background: linear-gradient(180deg, #6b5b8a 0%, #5a4a78 100%);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(90, 74, 120, 0.35);
+}
+
+.excel-btn-secondary {
+    background: #faf8fc;
+    color: #2d2340;
+    border: 1px solid #d0c4e0;
+}
+
+.excel-btn-secondary:hover {
+    background: #f0eaf5;
+    color: #2d2340;
+}
+
+.excel-btn-preview {
+    background: transparent;
+    color: #5a4a78;
+    border: 1px solid #9b8ab8;
+}
+
+.excel-btn-preview:hover:not(:disabled) {
+    background: #e8e0f0;
+    color: #2d2340;
+}
+
+.excel-btn-preview:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ========== Tablas estilo factura (cabecera azul oscuro, filas alternas) ========== */
+.table-invoice {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.table-invoice thead th {
+    background: linear-gradient(180deg, #1e3a5f 0%, #152a47 100%);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.9rem 1rem;
+    text-align: left;
+    border: none;
+}
+
+.table-invoice thead th:first-child {
+    padding-left: 1.25rem;
+}
+
+.table-invoice thead th:last-child {
+    padding-right: 1.25rem;
+}
+
+.table-invoice tbody tr {
+    transition: background-color 0.15s;
+}
+
+.table-invoice tbody tr:nth-child(odd) {
+    background-color: #f0f6fc;
+}
+
+.table-invoice tbody tr:nth-child(even) {
+    background-color: #fff;
+}
+
+.table-invoice tbody tr:hover {
+    background-color: #e4eef8 !important;
+}
+
+.table-invoice tbody td {
+    padding: 0.75rem 1rem;
+    color: #2c3e50;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #e8eef4;
+}
+
+.table-invoice tbody td:first-child {
+    padding-left: 1.25rem;
+}
+
+.table-invoice tbody td:last-child {
+    padding-right: 1.25rem;
+}
+
+.table-invoice tfoot td,
+.table-invoice .table-invoice-summary {
+    background: linear-gradient(180deg, #1e3a5f 0%, #152a47 100%);
+    color: #fff;
+    font-weight: 600;
+    padding: 0.9rem 1.25rem;
+    border: none;
+}
+
+.table-invoice-wrapper {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ========== Dashboard - KPIs y gráficos ========== */
+.dashboard-kpi {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.dashboard-kpi-header {
+    background: linear-gradient(180deg, #1e3a5f 0%, #152a47 100%);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.6rem 0.9rem;
+}
+
+.dashboard-kpi-value {
+    padding: 0.9rem 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+    background: #fff;
+}
+
+.dashboard-chart-card {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.dashboard-chart-header {
+    background: linear-gradient(180deg, #1e3a5f 0%, #152a47 100%);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.75rem 1.25rem;
+}
+
+.dashboard-chart-body {
+    padding: 1.25rem;
+    background: #fff;
+    min-height: 320px;
+}
+
+.dashboard-chart-body canvas {
+    max-height: 380px;
+}
+
+/* ========== Página Editar - mismo fondo que Procesar Excel ========== */
+.edit-page {
+    background: linear-gradient(160deg, #3d2a5c 0%, #2d1f45 50%, #1f1535 100%);
+    min-height: 100vh;
+}
+
+.edit-form-panel {
+    max-width: 640px;
+}

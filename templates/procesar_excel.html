@@ -1,56 +1,244 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
-    <title>Procesar Excel</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesar Excel - Despachos PDF</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-Y0zQr07d8uSsM9Q898aFj1b48ZQ9n8yEzZDh8HwX75lC6rJfCx7/rHrR0jX83n" crossorigin="anonymous"></script>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100 excel-page">
 
-<h2>Procesar Excel</h2>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('dashboard.home') }}">Despachos PDF</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menú">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('dashboard.home') }}">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('dashboard.dashboard') }}">Dashboard / Detalle</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('pdf.ver_recovery') }}">Recovery Data</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active nav-link-close" href="{{ url_for('excel.procesar_excel_route') }}">Procesar Excel</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('pdf.limpiar_tabla') }}">Limpiar tabla</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-<form action="/procesar_excel" method="post" enctype="multipart/form-data">
+<main class="flex-grow-1 d-flex align-items-start justify-content-center py-5 px-3">
+    <div class="excel-form-panel">
+        <h1 class="excel-form-title">
+            <span class="excel-form-icon" aria-hidden="true">+</span>
+            Procesar Excel
+        </h1>
 
-Archivo Excel
-<input type="file" name="excel" required>
+        <form action="{{ url_for('excel.procesar_excel_route') }}" method="post" enctype="multipart/form-data" class="excel-form">
+            <section class="excel-form-section">
+                <h2 class="excel-form-section-title">Archivo</h2>
+                <label class="excel-form-label">Archivo Excel</label>
+                <div class="d-flex flex-wrap gap-2 align-items-end">
+                    <input type="file" name="excel" id="inputExcel" class="excel-form-input" required accept=".xlsx,.xlsm,.xls" style="flex: 1; min-width: 200px;">
+                    <button type="button" class="excel-btn excel-btn-preview" id="btnVistaPrevia" disabled>Vista previa</button>
+                </div>
+            </section>
 
-<br><br>
+            <section class="excel-form-section">
+                <h2 class="excel-form-section-title">Rango y columnas</h2>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="excel-form-label">Columna de códigos</label>
+                        <input type="text" name="col_codigo" class="excel-form-input" placeholder="Ej: A" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="excel-form-label">Columna resultado</label>
+                        <input type="text" name="col_resultado" class="excel-form-input" placeholder="Ej: D" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="excel-form-label">Fila inicio</label>
+                        <input type="number" name="fila_inicio" class="excel-form-input" placeholder="Ej: 2" required min="1">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="excel-form-label">Fila final</label>
+                        <input type="number" name="fila_final" class="excel-form-input" placeholder="Ej: 50" required min="1">
+                    </div>
+                </div>
+            </section>
 
-Columna de códigos
-<input type="text" name="col_codigo" placeholder="Ej: A" required>
+            <section class="excel-form-section">
+                <h2 class="excel-form-section-title">Hoja</h2>
+                <label class="excel-form-label">Hoja a procesar</label>
+                <input type="text" name="hoja" class="excel-form-input" placeholder="Vacío = primera hoja. Ej: 1 o nombre de hoja">
+            </section>
 
-<br><br>
+            <div class="excel-form-actions">
+                <button type="submit" class="excel-btn excel-btn-primary">Procesar Excel</button>
+                <a href="{{ url_for('dashboard.home') }}" class="excel-btn excel-btn-secondary">Volver</a>
+            </div>
+        </form>
+    </div>
+</main>
 
-Fila inicio
-<input type="number" name="fila_inicio" placeholder="Ej: 2" required>
+<!-- Modal vista previa Excel -->
+<div class="modal fade" id="modalVistaPrevia" tabindex="-1" aria-labelledby="modalVistaPreviaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalVistaPreviaLabel">Vista previa del archivo Excel</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <p id="previewHojaInfo" class="text-muted small mb-2"></p>
+                <div id="previewLoading" class="text-center py-4 d-none">
+                    <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando…</span></div>
+                    <p class="mt-2 mb-0">Cargando vista previa…</p>
+                </div>
+                <div id="previewError" class="alert alert-danger d-none" role="alert"></div>
+                <div id="previewTableWrap" class="table-responsive d-none">
+                    <table class="table table-sm table-bordered table-striped" id="tablaPreview">
+                        <tbody id="tablaPreviewBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<br><br>
+<script>
+document.querySelectorAll('.nav-link-close').forEach(function(link) {
+    link.addEventListener('click', function() {
+        var collapse = document.getElementById('navbarNav');
+        if (collapse && collapse.classList.contains('show')) {
+            var bs = bootstrap.Collapse.getInstance(collapse);
+            if (bs) bs.hide();
+        }
+    });
+});
 
-Fila final
-<input type="number" name="fila_final" placeholder="Ej: 50" required>
+(function() {
+    var inputExcel = document.getElementById('inputExcel');
+    var btnVistaPrevia = document.getElementById('btnVistaPrevia');
+    var modalEl = document.getElementById('modalVistaPrevia');
+    var previewHojaInfo = document.getElementById('previewHojaInfo');
+    var previewLoading = document.getElementById('previewLoading');
+    var previewError = document.getElementById('previewError');
+    var previewTableWrap = document.getElementById('previewTableWrap');
+    var tablaPreviewBody = document.getElementById('tablaPreviewBody');
+    var previewUrl = "{{ url_for('excel.preview_excel_route') }}";
 
-<br><br>
+    if (inputExcel) {
+        inputExcel.addEventListener('change', function() {
+            btnVistaPrevia.disabled = !(inputExcel.files && inputExcel.files.length > 0);
+        });
+    }
 
-Columna resultado
-<input type="text" name="col_resultado" placeholder="Ej: D" required>
+    function resetModalEstado() {
+        previewLoading.classList.add('d-none');
+        previewError.classList.add('d-none');
+        previewTableWrap.classList.add('d-none');
+        previewHojaInfo.textContent = '';
+        previewError.textContent = '';
+        if (tablaPreviewBody) tablaPreviewBody.innerHTML = '';
+    }
 
-<br><br>
+    function cargarVistaPrevia() {
+        if (!inputExcel || !inputExcel.files || !inputExcel.files[0]) {
+            if (previewError) {
+                previewError.textContent = 'Seleccione un archivo Excel primero.';
+                previewError.classList.remove('d-none');
+            }
+            return;
+        }
 
-Hoja a procesar
-<input type="text" name="hoja" placeholder="Ej: 1">
+        previewLoading.classList.remove('d-none');
+        previewError.classList.add('d-none');
+        previewTableWrap.classList.add('d-none');
+        previewHojaInfo.textContent = '';
+        if (tablaPreviewBody) tablaPreviewBody.innerHTML = '';
 
-<br><br>
+        var formData = new FormData();
+        formData.append('excel', inputExcel.files[0]);
 
-<button type="submit">Procesar Excel</button>
+        fetch(previewUrl, { method: 'POST', body: formData })
+            .then(function(response) {
+                var contentType = response.headers.get('content-type') || '';
+                if (contentType.indexOf('application/json') !== -1) {
+                    return response.json().then(function(data) {
+                        return { ok: response.ok, data: data };
+                    });
+                }
+                return response.text().then(function(text) {
+                    return { ok: false, data: { error: text || 'Error en el servidor' } };
+                });
+            })
+            .then(function(result) {
+                previewLoading.classList.add('d-none');
+                if (!result.ok) {
+                    previewError.textContent = (result.data && result.data.error) || 'Error al cargar la vista previa.';
+                    previewError.classList.remove('d-none');
+                    return;
+                }
+                var d = result.data;
+                if (!d) {
+                    previewError.textContent = 'No se recibieron datos.';
+                    previewError.classList.remove('d-none');
+                    return;
+                }
+                previewHojaInfo.textContent = 'Hoja: \"' + (d.hoja_actual || '') + '\". Hojas disponibles: ' + (d.hojas && d.hojas.length ? d.hojas.join(', ') : 'ninguna');
+                if (d.preview && d.preview.length > 0) {
+                    d.preview.forEach(function(row) {
+                        var tr = document.createElement('tr');
+                        (row || []).forEach(function(cell) {
+                            var td = document.createElement('td');
+                            td.textContent = cell === null || cell === undefined ? '' : String(cell);
+                            tr.appendChild(td);
+                        });
+                        tablaPreviewBody.appendChild(tr);
+                    });
+                    previewTableWrap.classList.remove('d-none');
+                } else {
+                    previewError.textContent = 'No hay datos en la hoja.';
+                    previewError.classList.remove('d-none');
+                }
+            })
+            .catch(function(err) {
+                previewLoading.classList.add('d-none');
+                previewError.textContent = 'Error de conexión al cargar la vista previa. Compruebe la consola.';
+                previewError.classList.remove('d-none');
+            });
+    }
 
-</form>
-
-<br>
-
-<a href="/">
-<button>Volver</button>
-</a>
+    if (btnVistaPrevia && modalEl) {
+        btnVistaPrevia.addEventListener('click', function() {
+            resetModalEstado();
+            previewLoading.classList.remove('d-none');
+            var bsModal = new bootstrap.Modal(modalEl);
+            bsModal.show();
+            modalEl.addEventListener('shown.bs.modal', function onShown() {
+                modalEl.removeEventListener('shown.bs.modal', onShown);
+                cargarVistaPrevia();
+            }, { once: true });
+        });
+    }
+})();
+</script>
 
 </body>
-
 </html>

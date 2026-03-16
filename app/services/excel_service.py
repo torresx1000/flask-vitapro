@@ -1,5 +1,5 @@
 import os
-import os
+import uuid
 from io import BytesIO
 
 from openpyxl import Workbook, load_workbook
@@ -8,12 +8,67 @@ from sqlalchemy import func
 from app.db.database import session
 from app.models import Despacho
 
-import os
-from openpyxl import load_workbook
-from sqlalchemy import func
 
-from app.db.database import session
-from app.models import Despacho
+def preview_excel(file_obj, upload_folder, allowed_extensions, max_rows=30):
+    """
+    Lee el archivo Excel sin modificarlo y devuelve datos para vista previa:
+    nombres de hojas y primeras filas de la primera hoja.
+    Realizado en función aparte para no alterar el flujo de procesamiento.
+    """
+    filename = file_obj.filename or ""
+    if (
+        not filename
+        or "." not in filename
+        or filename.rsplit(".", 1)[1].lower() not in allowed_extensions
+    ):
+        raise ValueError("Solo se permiten archivos Excel (.xlsx y .xlsm)")
+
+    os.makedirs(upload_folder, exist_ok=True)
+    ext = filename.rsplit(".", 1)[1].lower()
+    temp_name = f"preview_{uuid.uuid4().hex}.{ext}"
+    path = os.path.join(upload_folder, temp_name)
+
+    try:
+        file_obj.save(path)
+
+        if ext == "xlsm":
+            wb = load_workbook(path, keep_vba=False, data_only=True)
+        else:
+            wb = load_workbook(path, data_only=True)
+
+        hojas = wb.sheetnames
+        if not hojas:
+            wb.close()
+            return {"hojas": [], "preview": [], "hoja_actual": None}
+
+        sheet = wb[hojas[0]]
+        preview = []
+        for i, row in enumerate(sheet.iter_rows(values_only=True)):
+            if i >= max_rows:
+                break
+            preview.append([_cell_to_preview(c) for c in row])
+
+        wb.close()
+        return {
+            "hojas": hojas,
+            "preview": preview,
+            "hoja_actual": hojas[0],
+        }
+    finally:
+        if os.path.exists(path):
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+
+
+def _cell_to_preview(value):
+    """Convierte valor de celda a tipo serializable para JSON."""
+    if value is None:
+        return ""
+    if isinstance(value, (int, float)):
+        return value
+    return str(value).strip()
 
 
 def procesar_excel(file_obj, form_data, upload_folder, allowed_extensions):
@@ -81,7 +136,9 @@ def procesar_datos(wb, form_data):
     fila_inicio = int(form_data["fila_inicio"])
     fila_final = int(form_data["fila_final"])
     col_resultado = form_data["col_resultado"].upper()
-    hoja_nombre = form_data["hoja"]
+    hoja_nombre = (form_data.get("hoja") or "").strip()
+    if not hoja_nombre and wb.sheetnames:
+        hoja_nombre = wb.sheetnames[0]
 
     if hoja_nombre not in wb.sheetnames:
         raise KeyError(f"La hoja no existe. Hojas disponibles: {wb.sheetnames}")

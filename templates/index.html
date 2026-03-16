@@ -4,49 +4,73 @@
 <head>
     <title>Despachos PDF</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-Y0zQr07d8uSsM9Q898aFj1b48ZQ9n8yEzZDh8HwX75lC6rJfCx7/rHrR0jX83n" crossorigin="anonymous"></script>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
 
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('dashboard.home') }}">Despachos PDF</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menú">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active nav-link-close" href="{{ url_for('dashboard.home') }}">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('dashboard.dashboard') }}">Dashboard / Detalle</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('pdf.ver_recovery') }}">Recovery Data</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('excel.procesar_excel_route') }}">Procesar Excel</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('pdf.limpiar_tabla') }}">Limpiar tabla</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<main class="container-fluid py-4 flex-grow-1">
 {% with messages = get_flashed_messages() %}
 {% if messages %}
-<div style="color:red; margin:10px;">
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
     {{ messages[0] }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
 </div>
 {% endif %}
 {% endwith %}
 
-<h2>Cargar PDF</h2>
+<h2 class="h4 mb-3">Cargar PDF</h2>
 
-<form action="{{ url_for('pdf.subir_pdf') }}" method="post" enctype="multipart/form-data">
-    <input type="file" name="pdf" required>
-    <button type="submit">Subir</button>
+<form action="{{ url_for('pdf.subir_pdf') }}" method="post" enctype="multipart/form-data" class="mb-4">
+    <div class="input-group" style="max-width: 400px;">
+        <input type="file" name="pdf" class="form-control" required accept=".pdf">
+        <button type="submit" class="btn btn-primary">Subir</button>
+    </div>
 </form>
 
-<hr>
+<hr class="my-4">
 
-<a href="{{ url_for('pdf.limpiar_tabla') }}">
-    <button>Limpiar tabla</button>
-</a>
+<h2 class="h4 mb-3">Registros</h2>
 
-<a href="{{ url_for('pdf.ver_recovery') }}">
-    <button>Ver Recovery Data</button>
-</a>
+<div class="mb-3 d-flex flex-wrap align-items-center gap-2">
+    <div class="input-group search-codigo-wrap" style="max-width: 320px;">
+        <input type="text" id="buscarCodigo" class="form-control" placeholder="Buscar por código..." aria-label="Código">
+        <button type="button" id="btnBuscar" class="btn btn-outline-primary">Buscar</button>
+    </div>
+    <button type="button" id="btnLimpiarBusqueda" class="btn btn-outline-secondary btn-sm">Limpiar búsqueda</button>
+</div>
 
-<a href="{{ url_for('dashboard.dashboard') }}">
-    <button>Dashboard</button>
-</a>
-
-<a href="{{ url_for('excel.procesar_excel_route') }}">
-    <button>Procesar Excel</button>
-</a>
-
-<hr>
-
-<h2>Registros</h2>
-
-<table border="1">
-
+<div class="table-responsive table-responsive-invoice">
+<table class="table table-invoice" id="tablaRegistros">
 <thead>
 <tr>
     <th>ID</th>
@@ -70,7 +94,7 @@
 
 {% for r in registros %}
 
-<tr>
+<tr data-codigo="{{ r.codigo or '' }}">
     <td>{{ r.id }}</td>
     <td>{{ r.id_carga }}</td>
     <td>{{ r.fecha }}</td>
@@ -85,8 +109,8 @@
     <td>{{ r.saldo }}</td>
     <td>{{ r.observaciones }}</td>
     <td>
-        <a href="{{ url_for('dashboard.editar', id=r.id) }}">Editar</a>
-        <a href="{{ url_for('dashboard.eliminar', id=r.id) }}">Eliminar</a>
+        <a href="{{ url_for('dashboard.editar', id=r.id) }}" class="btn btn-sm btn-outline-primary me-1">Editar</a>
+        <a href="{{ url_for('dashboard.eliminar', id=r.id) }}" class="btn btn-sm btn-outline-danger">Eliminar</a>
     </td>
 </tr>
 
@@ -95,10 +119,62 @@
 </tbody>
 
 </table>
+</div>
 
-<form action="{{ url_for('excel.exportar_excel') }}" method="get">
-    <button type="submit">Exportar a Excel</button>
+<p id="mensajeSinResultados" class="text-muted small mt-2 d-none">No hay registros que coincidan con el código buscado.</p>
+
+<form action="{{ url_for('excel.exportar_excel') }}" method="get" class="mt-3">
+    <button type="submit" class="btn btn-success">Exportar a Excel</button>
 </form>
+
+</main>
+
+<script>
+(function() {
+    var input = document.getElementById('buscarCodigo');
+    var btnBuscar = document.getElementById('btnBuscar');
+    var btnLimpiar = document.getElementById('btnLimpiarBusqueda');
+    var tabla = document.getElementById('tablaRegistros');
+    var mensaje = document.getElementById('mensajeSinResultados');
+
+    function filtrarPorCodigo() {
+        var texto = (input.value || '').trim().toLowerCase();
+        var filas = tabla ? tabla.querySelectorAll('tbody tr') : [];
+        var visibles = 0;
+        for (var i = 0; i < filas.length; i++) {
+            var codigo = (filas[i].getAttribute('data-codigo') || '').toLowerCase();
+            var mostrar = !texto || codigo.indexOf(texto) !== -1;
+            filas[i].style.display = mostrar ? '' : 'none';
+            if (mostrar) visibles++;
+        }
+        if (mensaje) mensaje.classList.toggle('d-none', visibles > 0 || filas.length === 0);
+    }
+
+    if (btnBuscar) btnBuscar.addEventListener('click', filtrarPorCodigo);
+    if (input) {
+        input.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); filtrarPorCodigo(); } });
+        input.addEventListener('input', function() { if (!input.value.trim()) filtrarPorCodigo(); });
+    }
+    if (btnLimpiar) {
+        btnLimpiar.addEventListener('click', function() {
+            input.value = '';
+            filtrarPorCodigo();
+            input.focus();
+        });
+    }
+})();
+</script>
+<script>
+document.querySelectorAll('.nav-link-close').forEach(function(link) {
+    link.addEventListener('click', function() {
+        var collapse = document.getElementById('navbarNav');
+        if (collapse && collapse.classList.contains('show')) {
+            var bs = bootstrap.Collapse.getInstance(collapse);
+            if (bs) bs.hide();
+        }
+    });
+});
+</script>
 
 </body>
 </html>

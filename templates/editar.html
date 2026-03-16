@@ -1,48 +1,122 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
+
 <head>
-    <title>Editar registro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar registro - Despachos PDF</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-Y0zQr07d8uSsM9Q898aFj1b48ZQ9n8yEzZDh8HwX75lC6rJfCx7/rHrR0jX83n" crossorigin="anonymous"></script>
 </head>
-<body>
 
-<h2>Editar Despacho</h2>
+<body class="d-flex flex-column min-vh-100 edit-page">
 
-<form method="POST">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('dashboard.home') }}">Despachos PDF</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Abrir menú">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('dashboard.home') }}">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('dashboard.dashboard') }}">Dashboard / Detalle</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('pdf.ver_recovery') }}">Recovery Data</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('excel.procesar_excel_route') }}">Procesar Excel</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-close" href="{{ url_for('pdf.limpiar_tabla') }}">Limpiar tabla</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-    Codigo
-    <input type="text" name="codigo" value="{{ r.codigo }}"><br>
+<main class="flex-grow-1 d-flex align-items-start justify-content-center py-5 px-3">
+    <div class="excel-form-panel edit-form-panel">
+        <h1 class="excel-form-title">
+            <span class="excel-form-icon" aria-hidden="true">✎</span>
+            Editar Despacho
+        </h1>
 
-    Lote
-    <input type="text" name="lote" value="{{ r.lote }}"><br>
+        <form method="POST" action="{{ url_for('dashboard.editar', id=r.id) }}" class="excel-form">
+            <section class="excel-form-section">
+                <h2 class="excel-form-section-title">Identificación</h2>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="excel-form-label">Código</label>
+                        <input type="text" name="codigo" class="excel-form-input" value="{{ r.codigo or '' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="excel-form-label">Lote</label>
+                        <input type="text" name="lote" class="excel-form-input" value="{{ r.lote or '' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="excel-form-label">Peso Promedio</label>
+                        <input type="text" name="peso" class="excel-form-input" value="{{ r.peso_promedio or '' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="excel-form-label">Ubicación</label>
+                        <input type="text" name="ubicacion" class="excel-form-input" value="{{ r.ubicacion or '' }}">
+                    </div>
+                </div>
+            </section>
 
-    Peso Promedio
-    <input type="text" name="peso" value="{{ r.peso_promedio }}"><br>
+            <section class="excel-form-section">
+                <h2 class="excel-form-section-title">Stock y cantidades</h2>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="excel-form-label">Stock Inicial</label>
+                        <input type="text" name="stock" class="excel-form-input" value="{{ r.stock_inicial or '' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="excel-form-label">Cantidad SAP</label>
+                        <input type="text" name="cantidad" class="excel-form-input" value="{{ r.cantidad_sap or '' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="excel-form-label">Despacho</label>
+                        <input type="text" name="despacho" class="excel-form-input" value="{{ r.despacho or '' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="excel-form-label">Saldo</label>
+                        <input type="text" name="saldo" class="excel-form-input" value="{{ r.saldo or '' }}">
+                    </div>
+                </div>
+            </section>
 
-    Ubicacion
-    <input type="text" name="ubicacion" value="{{ r.ubicacion }}"><br>
+            <section class="excel-form-section">
+                <h2 class="excel-form-section-title">Observaciones</h2>
+                <label class="excel-form-label">Observaciones</label>
+                <input type="text" name="obs" class="excel-form-input" value="{{ r.observaciones or '' }}">
+            </section>
 
-    Stock Inicial
-    <input type="text" name="stock" value="{{ r.stock_inicial }}"><br>
+            <div class="excel-form-actions">
+                <button type="submit" class="excel-btn excel-btn-primary">Guardar cambios</button>
+                <a href="{{ url_for('dashboard.home') }}" class="excel-btn excel-btn-secondary">Volver</a>
+            </div>
+        </form>
+    </div>
+</main>
 
-    Cantidad SAP
-    <input type="text" name="cantidad" value="{{ r.cantidad_sap }}"><br>
-
-    Despacho
-    <input type="text" name="despacho" value="{{ r.despacho }}"><br>
-
-    Saldo
-    <input type="text" name="saldo" value="{{ r.saldo }}"><br>
-
-    Observaciones
-    <input type="text" name="obs" value="{{ r.observaciones }}"><br><br>
-
-    <button type="submit">Guardar cambios</button>
-
-</form>
-
-<br>
-
-<a href="/">Volver</a>
+<script>
+document.querySelectorAll('.nav-link-close').forEach(function(link) {
+    link.addEventListener('click', function() {
+        var collapse = document.getElementById('navbarNav');
+        if (collapse && collapse.classList.contains('show')) {
+            var bs = bootstrap.Collapse.getInstance(collapse);
+            if (bs) bs.hide();
+        }
+    });
+});
+</script>
 
 </body>
 </html>

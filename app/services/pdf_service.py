@@ -89,7 +89,13 @@ def procesar_pdf(file_obj, upload_folder: str):
 
 
 def _to_float(valor):
+    """Convierte a float; None, vacío o inválido se guardan como 0.0 (incluye stock_inicial=0)."""
+    if valor is None:
+        return 0.0
+    s = str(valor).strip()
+    if s == "":
+        return 0.0
     try:
-        return float(str(valor).replace(",", "."))
-    except Exception:
-        return 0
+        return float(s.replace(",", "."))
+    except (ValueError, TypeError):
+        return 0.0

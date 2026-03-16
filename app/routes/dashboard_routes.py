@@ -84,20 +84,33 @@ def data_turnos():
     })
 
 
+def _form_float(value):
+    """Convierte valor de formulario a float; cadena vacía o inválida -> None (evita error SQLAlchemy)."""
+    if value is None:
+        return None
+    s = str(value).strip()
+    if s == "":
+        return None
+    try:
+        return float(s.replace(",", "."))
+    except (ValueError, TypeError):
+        return None
+
+
 @dashboard_bp.route("/editar/<int:id>", methods=["GET", "POST"])
 def editar(id):
     registro = session.get(Despacho, id)
 
     if request.method == "POST":
-        registro.codigo = request.form["codigo"]
-        registro.lote = request.form["lote"]
-        registro.peso_promedio = request.form["peso"]
-        registro.ubicacion = request.form["ubicacion"]
-        registro.stock_inicial = request.form["stock"]
-        registro.cantidad_sap = request.form["cantidad"]
-        registro.despacho = request.form["despacho"]
-        registro.saldo = request.form["saldo"]
-        registro.observaciones = request.form["obs"]
+        registro.codigo = (request.form.get("codigo") or "").strip() or None
+        registro.lote = (request.form.get("lote") or "").strip() or None
+        registro.peso_promedio = _form_float(request.form.get("peso"))
+        registro.ubicacion = (request.form.get("ubicacion") or "").strip() or None
+        registro.stock_inicial = _form_float(request.form.get("stock"))
+        registro.cantidad_sap = _form_float(request.form.get("cantidad"))
+        registro.despacho = _form_float(request.form.get("despacho"))
+        registro.saldo = _form_float(request.form.get("saldo"))
+        registro.observaciones = (request.form.get("obs") or "").strip() or None
 
         session.commit()
         return redirect(url_for("dashboard.home"))

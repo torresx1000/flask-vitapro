@@ -102,3 +102,46 @@ def vaciar_recovery():
         flash(f"Error al vaciar recovery: {str(e)}")
 
     return redirect(url_for("pdf.ver_recovery"))
+
+
+@pdf_bp.route("/recuperar_seleccion", methods=["POST"])
+def recuperar_seleccion():
+    ids = request.form.getlist("ids")
+    if not ids:
+        flash("Seleccione al menos un registro para recuperar.")
+        return redirect(url_for("pdf.ver_recovery"))
+
+    try:
+        recuperados = 0
+        for id_str in ids:
+            try:
+                id_int = int(id_str)
+            except ValueError:
+                continue
+            rec = session.get(RecoveryData, id_int)
+            if rec is None:
+                continue
+            despacho = Despacho(
+                id_carga=rec.id_carga,
+                fecha=rec.fecha,
+                turno=rec.turno,
+                codigo=rec.codigo,
+                lote=rec.lote,
+                peso_promedio=rec.peso_promedio,
+                ubicacion=rec.ubicacion,
+                stock_inicial=rec.stock_inicial,
+                cantidad_sap=rec.cantidad_sap,
+                despacho=rec.despacho,
+                saldo=rec.saldo,
+                observaciones=rec.observaciones,
+            )
+            session.add(despacho)
+            session.delete(rec)
+            recuperados += 1
+        session.commit()
+        flash(f"Se recuperaron {recuperados} registro(s) correctamente.")
+    except Exception as e:
+        session.rollback()
+        flash(f"Error al recuperar: {str(e)}")
+
+    return redirect(url_for("dashboard.home"))
