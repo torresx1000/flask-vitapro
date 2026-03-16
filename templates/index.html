@@ -30,9 +30,7 @@
                 <li class="nav-item">
                     <a class="nav-link nav-link-close" href="{{ url_for('excel.procesar_excel_route') }}">Procesar Excel</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link nav-link-close" href="{{ url_for('pdf.limpiar_tabla') }}">Limpiar tabla</a>
-                </li>
+                
             </ul>
         </div>
     </div>
@@ -67,6 +65,9 @@
         <button type="button" id="btnBuscar" class="btn btn-outline-primary">Buscar</button>
     </div>
     <button type="button" id="btnLimpiarBusqueda" class="btn btn-outline-secondary btn-sm">Limpiar búsqueda</button>
+    
+                    <a class="nav-link nav-link-close" href="{{ url_for('pdf.limpiar_tabla') }}">Limpiar tabla</a>
+                </li>
 </div>
 
 <div class="table-responsive table-responsive-invoice">
